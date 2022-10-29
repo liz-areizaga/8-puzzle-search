@@ -73,6 +73,7 @@ void left(problem& currProb){
   }
 }
 
+//data structure to track nodes
 queue<problem> nodes;
 
 int main() {
