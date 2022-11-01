@@ -3,7 +3,9 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <chrono>
 
+using namespace std::chrono;
 using namespace std;
 
 /* i, j
@@ -17,7 +19,7 @@ struct problem {
   int **currState; // current state
   int x_pos; //x-Position for blank spot
   int y_pos; //y-Position for blank spot
-  int f_n = 0;// heuristic cost
+  int h_n = 0;// heuristic cost
   int g_n = 0;//depth cost
 
 };
@@ -165,6 +167,11 @@ int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
 
+  int q_maxSize = 0; //tracks max size of queue
+  int nodes_numExpanded = 0; //tracks number of nodes expanded
+  //auto start = 0; //tracks start time of solving puzzle
+  long stop_long = 0; // tracks end time of solving puzzle
+
   problem eight_puzzle;
   //create 2D array to keep track of current state of puzzle
   eight_puzzle.currState = new int* [3];
@@ -197,6 +204,16 @@ int main() {
     cout << "\n";
   }
 
+  //data structure to track nodes
+  queue<problem> nodes;
+  problem currProb;
+
+  auto start = high_resolution_clock::now();
+  //push initial state (root of tree) into queue
+  nodes.push(eight_puzzle);
+  q_maxSize = nodes.size();
+
+  /*USED FOR TESTING
   cout << "Current State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
     for(unsigned int j = 0; j < arrSize; ++j) {
@@ -205,14 +222,6 @@ int main() {
     cout << "\n";
   }
 
-  //data structure to track nodes
-  queue<problem> nodes;
-  problem currProb;
-
-  //push initial state (root of tree) into queue
-  nodes.push(eight_puzzle);
-
-  /*USED FOR TESTING
   //push initial state (root of tree) into queue
   nodes.push(eight_puzzle);
   cout << "Size of queue: " << nodes.size() << endl;
@@ -243,21 +252,37 @@ int main() {
 
   }*/
 
-
+  /*
+  GENERIC SEARCH ALGORITHM
+    -UCS
+    -h_n = 0
+  */
   while(!nodes.empty()){
     currProb = nodes.front();
     nodes.pop();
     if(goalTest(currProb)){
-      cout << "Success!" << endl;
-      return 0; //success algorithm done
+      break; //success algorithm done
     }
     //expand - get all children nodes from currProb by using all possible operators
+    ++nodes_numExpanded;
     expand(currProb, nodes); //adds the children nodes of currProb into queue
+    //cout << "Curr size of queue: " << nodes.size() << "\n"; //visualize branching factor
+    if(nodes.size() > q_maxSize){
+      q_maxSize = nodes.size();
+    }
     if(nodes.empty()){
       cout << "algorithm failed.\n";
       return -1;
     }
   }
+  auto stop = high_resolution_clock::now();
+  cout << "Success!\n";
+  cout << "Solution Depth was " << currProb.g_n << ".\n";
+  cout << "Number of nodes expanded: " << nodes_numExpanded << "\n";
+  cout << "Max queue size: " << q_maxSize << "\n";
+
+  auto duration = duration_cast<microseconds>(stop - start);
+  cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";
 
   return 0;
 }
