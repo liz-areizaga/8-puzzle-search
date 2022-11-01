@@ -172,6 +172,21 @@ void expand(problem currProb, queue<problem>& nodes){ //creates children of curr
   }
 }
 
+int computeMisplacedTiles(problem prob1){ //returns the number of mispaced tiles between given puzzle and goalState
+  int numMisplacedTiles = 0;
+  for(unsigned int i = 0; i < arrSize; ++i){
+    for(unsigned int j = 0; j < arrSize; ++j){
+      if(prob1.currState[i][j] != goalState[i][j]){
+        ++numMisplacedTiles;
+      }
+    }
+  }
+  if(prob1.currState[2][2] != 0){
+    numMisplacedTiles -= 1; // decrease by 1 to account for double counting blank space
+  }
+  return numMisplacedTiles;
+}
+
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
@@ -186,7 +201,7 @@ int main() {
     eight_puzzle.currState[i] = new int[3];
   }
 
-  int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
+  //int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
   //int initialState[3][3] = {1,2,3,4,5,6,7,8,0}; //DEPTH 0 SOLUTION
   //int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
   //int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
@@ -236,6 +251,9 @@ int main() {
   nodes.push(eight_puzzle);
   q_maxSize = nodes.size();
 
+  //test heuristic function - computeMisplacedTiles
+  cout << "Number of mispaced tiles " << computeMisplacedTiles(eight_puzzle) << "\n";
+
   /*USED FOR TESTING
   cout << "Current State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
@@ -280,6 +298,7 @@ int main() {
     -UCS
     -h_n = 0
   */
+  /*
   while(!nodes.empty()){
     currProb = nodes.front();
     nodes.pop();
@@ -305,7 +324,7 @@ int main() {
   cout << "Max queue size: " << q_maxSize << "\n";
 
   auto duration = duration_cast<microseconds>(stop - start); //tracks time spent of algorithm
-  cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";
+  cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";*/
 
   return 0;
 }
