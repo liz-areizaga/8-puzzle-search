@@ -186,7 +186,15 @@ int main() {
     eight_puzzle.currState[i] = new int[3];
   }
 
-  int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state
+  int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
+  //int initialState[3][3] = {1,2,3,4,5,6,7,8,0}; //DEPTH 0 SOLUTION
+  //int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
+  //int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
+  //int initialState[3][3] = {1,3,6,5,0,2,4,7,8}; //DEPTH 8 SOLUTION
+  //int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
+  //int initialState[3][3] = {1,6,7,5,0,3,4,8,2}; //DEPTH 16 SOLUTION
+  //int initialState[3][3] = {7,1,2,4,8,5,6,3,0}; //DEPTH 20 SOLUTION
+
 
   //initialize eight-puzzle to the initial state
   /* Initialize eigh-puzzle to the initial state
@@ -200,8 +208,16 @@ int main() {
       eight_puzzle.currState[i][j] = initialState[i][j];
     }
   }
-  eight_puzzle.x_pos = 1; //set x-coordinate for blank spot
-  eight_puzzle.y_pos = 0; //set y-coordinate for blank spot
+  for(unsigned int i = 0; i < arrSize; ++i){ //find blank spot and assign x_pos and y_pos to the coordinates of it
+    for(unsigned int j = 0; j < arrSize; ++j){
+      if(eight_puzzle.currState[i][j] == 0){
+        eight_puzzle.x_pos = i;
+        eight_puzzle.y_pos = j;
+      }
+    }
+  }
+  //eight_puzzle.x_pos = 1; //set x-coordinate for blank spot
+  //eight_puzzle.y_pos = 0; //set y-coordinate for blank spot
 
   cout << "Initial State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
