@@ -72,7 +72,7 @@ problem up(const problem currProb){
   return newProb; //return modified problem
 }
 
-problem down(problem currProb){
+problem down(const problem currProb){
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -95,7 +95,7 @@ problem down(problem currProb){
   return newProb; //return modified problem
 }
 
-problem right(problem currProb){
+problem right(const problem currProb){
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -118,7 +118,7 @@ problem right(problem currProb){
   return newProb; //return modified problem
 }
 
-problem left(problem currProb){
+problem left(const problem currProb){
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -211,6 +211,10 @@ int main() {
 
   //push initial state (root of tree) into queue
   nodes.push(eight_puzzle);
+
+  /*USED FOR TESTING
+  //push initial state (root of tree) into queue
+  nodes.push(eight_puzzle);
   cout << "Size of queue: " << nodes.size() << endl;
   currProb = nodes.front();
   nodes.pop();
@@ -237,21 +241,23 @@ int main() {
       cout << "\n";
     }
 
-  }
+  }*/
 
 
-  /*while(!nodes.empty()){
+  while(!nodes.empty()){
     currProb = nodes.front();
     nodes.pop();
     if(goalTest(currProb)){
+      cout << "Success!" << endl;
       return 0; //success algorithm done
     }
-    //expand - get all children nodes from currProb by using all possivle operators
+    //expand - get all children nodes from currProb by using all possible operators
+    expand(currProb, nodes); //adds the children nodes of currProb into queue
     if(nodes.empty()){
       cout << "algorithm failed.\n";
       return -1;
     }
-  }*/
+  }
 
   return 0;
 }
