@@ -29,8 +29,31 @@ struct problem {
 
 };
 
+//REFERENCED: https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+struct greater_than_key {
+    inline bool operator() (const problem& prob1, const problem& prob2)
+    {
+        return (prob1.g_n + prob1.h_n > prob2.g_n + prob2.h_n);
+    }
+};
+
 const int arrSize = 3;
 int goalState[3][3] = {1,2,3,4,5,6,7,8,0};
+
+int computeMisplacedTiles(problem prob1){ //returns the number of mispaced tiles between given puzzle and goalState
+  int numMisplacedTiles = 0;
+  for(unsigned int i = 0; i < arrSize; ++i){
+    for(unsigned int j = 0; j < arrSize; ++j){
+      if(prob1.currState[i][j] != goalState[i][j]){
+        ++numMisplacedTiles;
+      }
+    }
+  }
+  if(prob1.currState[2][2] != 0){
+    numMisplacedTiles -= 1; // decrease by 1 to account for double counting blank space
+  }
+  return numMisplacedTiles;
+}
 
 bool equalProblems(problem prob1, problem prob2){ //returns true if given puzzles are the same
   for(unsigned int i = 0; i < arrSize; ++i){
@@ -75,6 +98,7 @@ problem up(const problem currProb){ // moves the tile below the blank spot up if
       newProb.currState[newProb.x_pos+1][newProb.y_pos] = 0;
       newProb.x_pos = newProb.x_pos+1;
   }
+  newProb.h_n = computeMisplacedTiles(newProb);
 
   return newProb; //return modified problem
 }
@@ -99,6 +123,7 @@ problem down(const problem currProb){ // moves the tile above the blank spot dow
       newProb.currState[newProb.x_pos-1][newProb.y_pos] = 0;
       newProb.x_pos = newProb.x_pos-1;
   }
+  newProb.h_n = computeMisplacedTiles(newProb);
   return newProb; //return modified problem
 }
 
@@ -122,6 +147,7 @@ problem right(const problem currProb){ // moves the tile to the left of the blan
       newProb.currState[newProb.x_pos][newProb.y_pos-1] = 0;
       newProb.y_pos = newProb.y_pos-1;
   }
+  newProb.h_n = computeMisplacedTiles(newProb);
   return newProb; //return modified problem
 }
 
@@ -145,6 +171,7 @@ problem left(const problem currProb){ // moves the tile to the right of the blan
       newProb.currState[newProb.x_pos][newProb.y_pos+1] = 0;
       newProb.y_pos = newProb.y_pos+1;
   }
+  newProb.h_n = computeMisplacedTiles(newProb);
   return newProb; //return modified problem
 }
 
@@ -152,39 +179,24 @@ problem left(const problem currProb){ // moves the tile to the right of the blan
   -tests all operators on given puzzle
   -adds valid resulting puzzles into queue
 */
-void expand(problem currProb, queue<problem>& nodes){ //creates children of current puzzle
+void expand(problem currProb, vector<problem>& nodes){ //creates children of current puzzle
 
   problem upOperator = up(currProb);
   if(!equalProblems(currProb, upOperator)){
-    nodes.push(upOperator);
+    nodes.push_back(upOperator);
   }
   problem downOperator = down(currProb);
   if(!equalProblems(currProb, downOperator)){
-    nodes.push(downOperator);
+    nodes.push_back(downOperator);
   }
   problem leftOperator = left(currProb);
   if(!equalProblems(currProb, leftOperator)){
-    nodes.push(leftOperator);
+    nodes.push_back(leftOperator);
   }
   problem rightOperator = right(currProb);
   if(!equalProblems(currProb, rightOperator)){
-    nodes.push(rightOperator);
+    nodes.push_back(rightOperator);
   }
-}
-
-int computeMisplacedTiles(problem prob1){ //returns the number of mispaced tiles between given puzzle and goalState
-  int numMisplacedTiles = 0;
-  for(unsigned int i = 0; i < arrSize; ++i){
-    for(unsigned int j = 0; j < arrSize; ++j){
-      if(prob1.currState[i][j] != goalState[i][j]){
-        ++numMisplacedTiles;
-      }
-    }
-  }
-  if(prob1.currState[2][2] != 0){
-    numMisplacedTiles -= 1; // decrease by 1 to account for double counting blank space
-  }
-  return numMisplacedTiles;
 }
 
 int main() {
@@ -203,7 +215,7 @@ int main() {
 
   //int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
   //int initialState[3][3] = {1,2,3,4,5,6,7,8,0}; //DEPTH 0 SOLUTION
-  //int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
+  int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
   //int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
   //int initialState[3][3] = {1,3,6,5,0,2,4,7,8}; //DEPTH 8 SOLUTION
   //int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
@@ -215,7 +227,7 @@ int main() {
   /* Initialize eigh-puzzle to the initial state
       -Puzzle is initialized to random start State
       -Depth cost of initial state is 0
-      -Heuristic cost for Uniform cost search is 0
+      -Heuristic cost for Misplaces Tiles is numMisplacedTiles
   */
 
   for(unsigned int i = 0; i < arrSize; ++i) { //initialize puzzle to initial state
@@ -231,8 +243,7 @@ int main() {
       }
     }
   }
-  //eight_puzzle.x_pos = 1; //set x-coordinate for blank spot
-  //eight_puzzle.y_pos = 0; //set y-coordinate for blank spot
+  eight_puzzle.h_n = computeMisplacedTiles(eight_puzzle);
 
   cout << "Initial State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
@@ -243,65 +254,34 @@ int main() {
   }
 
   //data structure to track nodes
-  queue<problem> nodes;
+  //using vector to be able to sort for heuristic search
+  vector<problem> nodes;
   problem currProb; //tracks node at the front of the queue
 
   auto start = high_resolution_clock::now(); //tracks start time of algorithm
   //push initial state (root of tree) into queue
-  nodes.push(eight_puzzle);
+  nodes.push_back(eight_puzzle);
   q_maxSize = nodes.size();
 
   //test heuristic function - computeMisplacedTiles
   cout << "Number of mispaced tiles " << computeMisplacedTiles(eight_puzzle) << "\n";
-
-  /*USED FOR TESTING
-  cout << "Current State:\n";
-  for(unsigned int i = 0; i < arrSize; ++i) {
-    for(unsigned int j = 0; j < arrSize; ++j) {
-      cout << eight_puzzle.currState[i][j] << ' ';
-    }
-    cout << "\n";
-  }
-
-  //push initial state (root of tree) into queue
-  nodes.push(eight_puzzle);
-  cout << "Size of queue: " << nodes.size() << endl;
-  currProb = nodes.front();
-  nodes.pop();
-  cout << "Before:\n";
-  for(unsigned int i = 0; i < arrSize; ++i){
-    for(unsigned int j = 0; j < arrSize; ++j){
-      cout << currProb.currState[i][j] << ' ';
-    }
-    cout << "\n";
-  }
-
-  expand(currProb, nodes); //returns the children nodes of currProb
-
-  cout << "Size of queue: " << nodes.size() << endl;
-  int nodesCount = 0;
-  while(!nodes.empty()){
-    cout << "Node number " << ++nodesCount << endl;
-    currProb = nodes.front();
-    nodes.pop();
-    for(unsigned int i = 0; i < arrSize; ++i) {
-      for(unsigned int j = 0; j < arrSize; ++j) {
-        cout << currProb.currState[i][j] << ' ';
-      }
-      cout << "\n";
-    }
-
-  }*/
 
   /*
   GENERIC SEARCH ALGORITHM
     -UCS
     -h_n = 0
   */
-  /*
+
   while(!nodes.empty()){
-    currProb = nodes.front();
-    nodes.pop();
+    sort(nodes.begin(), nodes.end(), greater_than_key());
+    cout << "Vector sorted by h_n + g_n\n";
+    for(unsigned int i = 0; i < nodes.size(); ++i){
+      cout << nodes.at(i).h_n + nodes.at(i).g_n << ' ';
+    }
+    cout << "\n";
+    currProb = nodes.back();
+    nodes.pop_back();
+    cout << "g(n) + f(n):\n" << currProb.g_n + currProb.h_n << "\n";
     if(goalTest(currProb)){
       break; //success algorithm done
     }
@@ -324,7 +304,7 @@ int main() {
   cout << "Max queue size: " << q_maxSize << "\n";
 
   auto duration = duration_cast<microseconds>(stop - start); //tracks time spent of algorithm
-  cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";*/
+  cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";
 
   return 0;
 }
