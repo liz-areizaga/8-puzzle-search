@@ -8,6 +8,11 @@
 using namespace std::chrono;
 using namespace std;
 
+/*REFERENCED GEEKS FOR GEEKS
+    for timer implementation
+    Link: https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
+*/
+
 /* i, j
 Positions:
 0,0 0,1 0,2
@@ -49,7 +54,7 @@ bool goalTest(problem currProb){
     return true;
 }
 
-problem up(const problem currProb){
+problem up(const problem currProb){ // moves the tile below the blank spot up if within range
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -74,7 +79,7 @@ problem up(const problem currProb){
   return newProb; //return modified problem
 }
 
-problem down(const problem currProb){
+problem down(const problem currProb){ // moves the tile above the blank spot down if within range
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -97,7 +102,7 @@ problem down(const problem currProb){
   return newProb; //return modified problem
 }
 
-problem right(const problem currProb){
+problem right(const problem currProb){ // moves the tile to the left of the blank spot right if within range
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -120,7 +125,7 @@ problem right(const problem currProb){
   return newProb; //return modified problem
 }
 
-problem left(const problem currProb){
+problem left(const problem currProb){ // moves the tile to the right of the blank spot left if within range
   problem newProb;
   newProb.currState = new int* [3];
   for (unsigned int i = 0; i < 3; ++i){
@@ -143,7 +148,11 @@ problem left(const problem currProb){
   return newProb; //return modified problem
 }
 
-void expand(problem currProb, queue<problem>& nodes){
+/*EXPAND
+  -tests all operators on given puzzle
+  -adds valid resulting puzzles into queue
+*/
+void expand(problem currProb, queue<problem>& nodes){ //creates children of current puzzle
 
   problem upOperator = up(currProb);
   if(!equalProblems(currProb, upOperator)){
@@ -169,8 +178,6 @@ int main() {
 
   int q_maxSize = 0; //tracks max size of queue
   int nodes_numExpanded = 0; //tracks number of nodes expanded
-  //auto start = 0; //tracks start time of solving puzzle
-  long stop_long = 0; // tracks end time of solving puzzle
 
   problem eight_puzzle;
   //create 2D array to keep track of current state of puzzle
@@ -206,9 +213,9 @@ int main() {
 
   //data structure to track nodes
   queue<problem> nodes;
-  problem currProb;
+  problem currProb; //tracks node at the front of the queue
 
-  auto start = high_resolution_clock::now();
+  auto start = high_resolution_clock::now(); //tracks start time of algorithm
   //push initial state (root of tree) into queue
   nodes.push(eight_puzzle);
   q_maxSize = nodes.size();
@@ -275,13 +282,13 @@ int main() {
       return -1;
     }
   }
-  auto stop = high_resolution_clock::now();
+  auto stop = high_resolution_clock::now(); //tracks end time of algorithm
   cout << "Success!\n";
   cout << "Solution Depth was " << currProb.g_n << ".\n";
   cout << "Number of nodes expanded: " << nodes_numExpanded << "\n";
   cout << "Max queue size: " << q_maxSize << "\n";
 
-  auto duration = duration_cast<microseconds>(stop - start);
+  auto duration = duration_cast<microseconds>(stop - start); //tracks time spent of algorithm
   cout << "Time taken to solve puzzle: " << duration.count() << "ms\n";
 
   return 0;
