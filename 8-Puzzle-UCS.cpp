@@ -47,48 +47,102 @@ bool goalTest(problem currProb){
     return true;
 }
 
-problem up(problem currProb){
-  //move number below blank space up
-  if(currProb.x_pos >= 0 && currProb.x_pos <= 1){
-      currProb.currState[currProb.x_pos][currProb.y_pos] = currProb.currState[currProb.x_pos+1][currProb.y_pos];
-      currProb.currState[currProb.x_pos+1][currProb.y_pos] = 0;
-      currProb.x_pos = currProb.x_pos+1;
+problem up(const problem currProb){
+  problem newProb;
+  newProb.currState = new int* [3];
+  for (unsigned int i = 0; i < 3; ++i){
+    newProb.currState[i] = new int[3];
   }
-  currProb.g_n += 1; //parent g_n + 1
-  return currProb; //return modified problem
+  for(unsigned int i = 0; i < arrSize; ++i) { //copy puzzle
+    for(unsigned int j = 0; j < arrSize; ++j) {
+      newProb.currState[i][j] = currProb.currState[i][j];
+    }
+  }
+  newProb.x_pos = currProb.x_pos; //set x-coordinate for blank spot
+  newProb.y_pos = currProb.y_pos; //set y-coordinate for blank spot
+  newProb.g_n = currProb.g_n + 1; //parent g_n + 1
+
+  //move number below blank space up
+  if(newProb.x_pos >= 0 && newProb.x_pos <= 1){
+      newProb.currState[newProb.x_pos][newProb.y_pos] = newProb.currState[newProb.x_pos+1][newProb.y_pos];
+      newProb.currState[newProb.x_pos+1][newProb.y_pos] = 0;
+      newProb.x_pos = newProb.x_pos+1;
+  }
+
+  return newProb; //return modified problem
 }
 
 problem down(problem currProb){
-  if(currProb.x_pos >= 1 && currProb.x_pos <= 2){
-      currProb.currState[currProb.x_pos][currProb.y_pos] = currProb.currState[currProb.x_pos-1][currProb.y_pos];
-      currProb.currState[currProb.x_pos-1][currProb.y_pos] = 0;
-      currProb.x_pos = currProb.x_pos-1;
+  problem newProb;
+  newProb.currState = new int* [3];
+  for (unsigned int i = 0; i < 3; ++i){
+    newProb.currState[i] = new int[3];
   }
-  currProb.g_n += 1; //parent g+n + 1
-  return currProb; //return modified problem
+  for(unsigned int i = 0; i < arrSize; ++i) { //copy puzzle
+    for(unsigned int j = 0; j < arrSize; ++j) {
+      newProb.currState[i][j] = currProb.currState[i][j];
+    }
+  }
+  newProb.x_pos = currProb.x_pos; //set x-coordinate for blank spot
+  newProb.y_pos = currProb.y_pos; //set y-coordinate for blank spot
+  newProb.g_n = currProb.g_n + 1; //parent g_n + 1
+
+  if(newProb.x_pos >= 1 && newProb.x_pos <= 2){
+      newProb.currState[newProb.x_pos][newProb.y_pos] = newProb.currState[newProb.x_pos-1][newProb.y_pos];
+      newProb.currState[newProb.x_pos-1][newProb.y_pos] = 0;
+      newProb.x_pos = newProb.x_pos-1;
+  }
+  return newProb; //return modified problem
 }
 
 problem right(problem currProb){
-  if(currProb.y_pos >= 1 && currProb.y_pos <= 2){
-      currProb.currState[currProb.x_pos][currProb.y_pos] = currProb.currState[currProb.x_pos][currProb.y_pos-1];
-      currProb.currState[currProb.x_pos][currProb.y_pos-1] = 0;
-      currProb.y_pos = currProb.y_pos-1;
+  problem newProb;
+  newProb.currState = new int* [3];
+  for (unsigned int i = 0; i < 3; ++i){
+    newProb.currState[i] = new int[3];
   }
-  currProb.g_n += 1; //parent g+n + 1
-  return currProb; //return modified problem
+  for(unsigned int i = 0; i < arrSize; ++i) { //copy puzzle
+    for(unsigned int j = 0; j < arrSize; ++j) {
+      newProb.currState[i][j] = currProb.currState[i][j];
+    }
+  }
+  newProb.x_pos = currProb.x_pos; //set x-coordinate for blank spot
+  newProb.y_pos = currProb.y_pos; //set y-coordinate for blank spot
+  newProb.g_n = currProb.g_n + 1; //parent g_n + 1
+
+  if(newProb.y_pos >= 1 && newProb.y_pos <= 2){
+      newProb.currState[newProb.x_pos][newProb.y_pos] = newProb.currState[newProb.x_pos][newProb.y_pos-1];
+      newProb.currState[newProb.x_pos][newProb.y_pos-1] = 0;
+      newProb.y_pos = newProb.y_pos-1;
+  }
+  return newProb; //return modified problem
 }
 
 problem left(problem currProb){
-  if(currProb.y_pos >= 0 && currProb.y_pos <= 1){
-      currProb.currState[currProb.x_pos][currProb.y_pos] = currProb.currState[currProb.x_pos][currProb.y_pos+1];
-      currProb.currState[currProb.x_pos][currProb.y_pos+1] = 0;
-      currProb.y_pos = currProb.y_pos+1;
+  problem newProb;
+  newProb.currState = new int* [3];
+  for (unsigned int i = 0; i < 3; ++i){
+    newProb.currState[i] = new int[3];
   }
-  currProb.g_n += 1; //parent g+n + 1
-  return currProb; //return modified problem
+  for(unsigned int i = 0; i < arrSize; ++i) { //copy puzzle
+    for(unsigned int j = 0; j < arrSize; ++j) {
+      newProb.currState[i][j] = currProb.currState[i][j];
+    }
+  }
+  newProb.x_pos = currProb.x_pos; //set x-coordinate for blank spot
+  newProb.y_pos = currProb.y_pos; //set y-coordinate for blank spot
+  newProb.g_n = currProb.g_n + 1; //parent g_n + 1
+
+  if(newProb.y_pos >= 0 && newProb.y_pos <= 1){
+      newProb.currState[newProb.x_pos][newProb.y_pos] = newProb.currState[newProb.x_pos][newProb.y_pos+1];
+      newProb.currState[newProb.x_pos][newProb.y_pos+1] = 0;
+      newProb.y_pos = newProb.y_pos+1;
+  }
+  return newProb; //return modified problem
 }
 
 void expand(problem currProb, queue<problem>& nodes){
+
   problem upOperator = up(currProb);
   if(!equalProblems(currProb, upOperator)){
     nodes.push(upOperator);
@@ -118,7 +172,7 @@ int main() {
     eight_puzzle.currState[i] = new int[3];
   }
 
-  int initialState[3][3] = {8,3,5,4,1,0,2,7,6}; //random start state
+  int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state
 
   //initialize eight-puzzle to the initial state
   /* Initialize eigh-puzzle to the initial state
@@ -133,7 +187,7 @@ int main() {
     }
   }
   eight_puzzle.x_pos = 1; //set x-coordinate for blank spot
-  eight_puzzle.y_pos = 2; //set y-coordinate for blank spot
+  eight_puzzle.y_pos = 0; //set y-coordinate for blank spot
 
   cout << "Initial State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
@@ -157,6 +211,7 @@ int main() {
 
   //push initial state (root of tree) into queue
   nodes.push(eight_puzzle);
+  cout << "Size of queue: " << nodes.size() << endl;
   currProb = nodes.front();
   nodes.pop();
   cout << "Before:\n";
@@ -167,29 +222,21 @@ int main() {
     cout << "\n";
   }
 
-  expand(currProb, nodes);
-  if(!nodes.empty()){
-    currProb = nodes.front();
-    nodes.pop();
-  }
-  cout << "After 1:\n";
-  for(unsigned int i = 0; i < arrSize; ++i){
-    for(unsigned int j = 0; j < arrSize; ++j){
-      cout << currProb.currState[i][j] << ' ';
-    }
-    cout << "\n";
-  }
+  expand(currProb, nodes); //returns the children nodes of currProb
 
-  if(!nodes.empty()){
+  cout << "Size of queue: " << nodes.size() << endl;
+  int nodesCount = 0;
+  while(!nodes.empty()){
+    cout << "Node number " << ++nodesCount << endl;
     currProb = nodes.front();
     nodes.pop();
-  }
-  cout << " After 2:\n";
-  for(unsigned int i = 0; i < arrSize; ++i){
-    for(unsigned int j = 0; j < arrSize; ++j){
-      cout << currProb.currState[i][j] << ' ';
+    for(unsigned int i = 0; i < arrSize; ++i) {
+      for(unsigned int j = 0; j < arrSize; ++j) {
+        cout << currProb.currState[i][j] << ' ';
+      }
+      cout << "\n";
     }
-    cout << "\n";
+
   }
 
 
