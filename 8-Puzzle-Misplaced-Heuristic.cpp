@@ -215,15 +215,29 @@ int main() {
     eight_puzzle.currState[i] = new int[3];
   }
 
+  int userChoice;
+  int currInput;
+  cout << "Welcome to Lizbeth's 8-Puzzle Solver!\nPlease enter 1 if you would like to use a default puzzle or press 2 if you woul like to enter your own puzzle\n";
+  cin >> userChoice;
+
   //int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
   //int initialState[3][3] = {1,2,3,4,5,6,7,8,0}; //DEPTH 0 SOLUTION
   //int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
-  //int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
+  int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
   //int initialState[3][3] = {1,3,6,5,0,2,4,7,8}; //DEPTH 8 SOLUTION
-  int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
+  //int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
   //int initialState[3][3] = {1,6,7,5,0,3,4,8,2}; //DEPTH 16 SOLUTION
   //int initialState[3][3] = {7,1,2,4,8,5,6,3,0}; //DEPTH 20 SOLUTION
 
+  if(userChoice == 2){
+    cout << "Please enter the puzzle by typing a single number at a time followed by ENTER key.\nRepresent the blank space as a 0.\n";
+    for(unsigned int i = 0; i < arrSize; ++i){
+      for(unsigned int j = 0; j < arrSize; ++j){
+        cin >> userChoice;
+        initialState[i][j] = userChoice;
+      }
+    }
+  }
 
   //initialize eight-puzzle to the initial state
   /* Initialize eigh-puzzle to the initial state
