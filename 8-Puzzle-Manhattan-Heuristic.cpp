@@ -42,19 +42,43 @@ struct greater_than_key {
 const int arrSize = 3;
 int goalState[3][3] = {1,2,3,4,5,6,7,8,0};
 
-int computeMisplacedTiles(problem prob1){ //returns the number of mispaced tiles between given puzzle and goalState
-  int numMisplacedTiles = 0;
+int computeCellDist(problem prob1, int x_given, int y_given){ //returns the distance away from its goal position
+  int dist = 0;
+  int x_dist = 0;
+  int y_dist = 0;
+  int x_goal;
+  int y_goal;
   for(unsigned int i = 0; i < arrSize; ++i){
     for(unsigned int j = 0; j < arrSize; ++j){
-      if(prob1.currState[i][j] != goalState[i][j]){
-        ++numMisplacedTiles;
+      if(goalState[i][j] == prob1.currState[x_given][y_given]){
+        x_goal = i;
+        y_goal = j;
       }
     }
   }
-  if(prob1.currState[2][2] != 0){
-    numMisplacedTiles -= 1; // decrease by 1 to account for double counting blank space
+
+  x_dist = x_given - x_goal;
+  y_dist = y_given - y_goal;
+  if(x_dist < 0){
+    x_dist *= -1;
   }
-  return numMisplacedTiles;
+  if(y_dist < 0) {
+    y_dist *= -1;
+  }
+  dist = x_dist +y_dist;
+  return dist;
+}
+
+int computeManhattanDist(problem prob1){
+  int manhattanDist = 0;
+  for(unsigned int i = 0; i < arrSize; ++i){
+    for(unsigned int j = 0; j < arrSize; ++j){
+      if(prob1.currState[i][j] != goalState[i][j] && prob1.currState[i][j] != 0){ //for any mistmaching tiles, compute how far they are from goal state pos
+        manhattanDist += computeCellDist(prob1, i, j);
+      }
+    }
+  }
+  return manhattanDist;
 }
 
 bool equalProblems(problem prob1, problem prob2){ //returns true if given puzzles are the same
@@ -100,7 +124,7 @@ problem up(const problem currProb){ // moves the tile below the blank spot up if
       newProb.currState[newProb.x_pos+1][newProb.y_pos] = 0;
       newProb.x_pos = newProb.x_pos+1;
   }
-  newProb.h_n = computeMisplacedTiles(newProb);
+  newProb.h_n = computeManhattanDist(newProb);
 
   return newProb; //return modified problem
 }
@@ -125,7 +149,7 @@ problem down(const problem currProb){ // moves the tile above the blank spot dow
       newProb.currState[newProb.x_pos-1][newProb.y_pos] = 0;
       newProb.x_pos = newProb.x_pos-1;
   }
-  newProb.h_n = computeMisplacedTiles(newProb);
+  newProb.h_n = computeManhattanDist(newProb);
   return newProb; //return modified problem
 }
 
@@ -149,7 +173,7 @@ problem right(const problem currProb){ // moves the tile to the left of the blan
       newProb.currState[newProb.x_pos][newProb.y_pos-1] = 0;
       newProb.y_pos = newProb.y_pos-1;
   }
-  newProb.h_n = computeMisplacedTiles(newProb);
+  newProb.h_n = computeManhattanDist(newProb);
   return newProb; //return modified problem
 }
 
@@ -173,7 +197,7 @@ problem left(const problem currProb){ // moves the tile to the right of the blan
       newProb.currState[newProb.x_pos][newProb.y_pos+1] = 0;
       newProb.y_pos = newProb.y_pos+1;
   }
-  newProb.h_n = computeMisplacedTiles(newProb);
+  newProb.h_n = computeManhattanDist(newProb);
   return newProb; //return modified problem
 }
 
@@ -223,6 +247,7 @@ int main() {
   int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
   //int initialState[3][3] = {1,6,7,5,0,3,4,8,2}; //DEPTH 16 SOLUTION
   //int initialState[3][3] = {7,1,2,4,8,5,6,3,0}; //DEPTH 20 SOLUTION
+  //int initialState[3][3] = {0,7,2,4,6,1,3,5,8}; //DEPTH 24 SOLUTION
 
 
   //initialize eight-puzzle to the initial state
@@ -245,7 +270,7 @@ int main() {
       }
     }
   }
-  eight_puzzle.h_n = computeMisplacedTiles(eight_puzzle);
+  eight_puzzle.h_n = computeManhattanDist(eight_puzzle); //FIX
 
   cout << "Initial State:\n";
   for(unsigned int i = 0; i < arrSize; ++i) {
