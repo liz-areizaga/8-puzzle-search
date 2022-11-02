@@ -29,7 +29,9 @@ struct problem {
 
 };
 
-//REFERENCED: https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+/* custom function to sort vector by cheapest cost (g_n + h_n)
+REFERENCED: https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+*/
 struct greater_than_key {
     inline bool operator() (const problem& prob1, const problem& prob2)
     {
@@ -215,10 +217,10 @@ int main() {
 
   //int initialState[3][3] = {1,8,2,0,4,3,7,6,5}; //random start state FIRST TEST
   //int initialState[3][3] = {1,2,3,4,5,6,7,8,0}; //DEPTH 0 SOLUTION
-  int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
+  //int initialState[3][3] = {1,2,3,4,5,6,0,7,8}; //DEPTH 2 SOLUTION
   //int initialState[3][3] = {1,2,3,5,0,6,4,7,8}; //DEPTH 4 SOLUTION
   //int initialState[3][3] = {1,3,6,5,0,2,4,7,8}; //DEPTH 8 SOLUTION
-  //int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
+  int initialState[3][3] = {1,3,6,5,0,7,4,8,2}; //DEPTH 12 SOLUTION
   //int initialState[3][3] = {1,6,7,5,0,3,4,8,2}; //DEPTH 16 SOLUTION
   //int initialState[3][3] = {7,1,2,4,8,5,6,3,0}; //DEPTH 20 SOLUTION
 
@@ -264,29 +266,30 @@ int main() {
   q_maxSize = nodes.size();
 
   //test heuristic function - computeMisplacedTiles
-  cout << "Number of mispaced tiles " << computeMisplacedTiles(eight_puzzle) << "\n";
+  //cout << "Number of mispaced tiles " << computeMisplacedTiles(eight_puzzle) << "\n";
 
   /*
   GENERIC SEARCH ALGORITHM
-    -UCS
-    -h_n = 0
+    -Misplaced Tiles heuristic
+    -h_n = number of tiles that are misplaced
   */
 
   while(!nodes.empty()){
     sort(nodes.begin(), nodes.end(), greater_than_key());
-    cout << "Vector sorted by h_n + g_n\n";
-    for(unsigned int i = 0; i < nodes.size(); ++i){
-      cout << nodes.at(i).h_n + nodes.at(i).g_n << ' ';
-    }
-    cout << "\n";
     currProb = nodes.back();
     nodes.pop_back();
-    cout << "g(n) + f(n):\n" << currProb.g_n + currProb.h_n << "\n";
     if(goalTest(currProb)){
       break; //success algorithm done
     }
     //expand - get all children nodes from currProb by using all possible operators
     ++nodes_numExpanded;
+    cout << "The best state to expand with g(n) = " << currProb.g_n << " and h(n) = " << currProb.h_n << " is...\n";
+    for(unsigned int i = 0; i < arrSize; ++i){
+      for(unsigned int j = 0; j < arrSize; ++j){
+        cout << currProb.currState[i][j] << ' ';
+      }
+      cout << "\n";
+    }
     expand(currProb, nodes); //adds the children nodes of currProb into queue
     //cout << "Curr size of queue: " << nodes.size() << "\n"; //visualize branching factor
     if(nodes.size() > q_maxSize){
